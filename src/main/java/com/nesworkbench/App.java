@@ -18,7 +18,7 @@ public final class App extends Application {
         Label title = new Label("NES Asset Workbench");
         title.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
         Label subtitle = new Label("Local-first tools for inspecting and editing NES graphics");
-        subtitle.setStyle("-fx-text-fill: #666666;");
+        subtitle.setStyle("-fx-text-fill: #616161;");
         VBox heading = new VBox(6, title, subtitle);
         heading.setPadding(new Insets(18));
 
