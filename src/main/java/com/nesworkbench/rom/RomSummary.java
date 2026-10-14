@@ -56,4 +56,15 @@ public record RomSummary(int mapper, int prgRomBytes, int chrRomBytes, boolean u
         int chrOffset = index * 16;
         return String.format("Tile %d ($%X) | CHR offset $%04X | file offset $%05X", index, index, chrOffset, chrFileOffset + chrOffset);
     }
+
+    /** Describes a display position and the original CHR tile it shows under a tile mapping. */
+    public String describeMapping(int position, int originalTile) {
+        if (position < 0 || position >= chrTileCount())
+            throw new IndexOutOfBoundsException("Position " + position + " is outside 0.." + (chrTileCount() - 1));
+        if (originalTile < 0 || originalTile >= chrTileCount())
+            throw new IndexOutOfBoundsException("Tile index " + originalTile + " is outside 0.." + (chrTileCount() - 1));
+        int chrOffset = originalTile * 16;
+        return String.format("Position %d ($%X) shows original tile %d ($%X) | CHR offset $%04X | file offset $%05X",
+                position, position, originalTile, originalTile, chrOffset, chrFileOffset + chrOffset);
+    }
 }

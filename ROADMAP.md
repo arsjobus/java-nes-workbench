@@ -28,11 +28,11 @@ Every item must include implementation, automated tests, and explicit completion
 **Test goals:** known bitplane patterns, all four pixel values, multiple tiles, empty data, invalid length, deterministic output.
 
 ## v0.2 — Mapping and projects
-- [ ] Select, swap, and reorder tile mapping entries
-- [ ] Preserve original tile identities
-- [ ] Add undo and redo
-- [ ] Save and reload versioned project files
-- [ ] Validate mapping indices and project files
+- [x] Select, swap, and reorder tile mapping entries
+- [x] Preserve original tile identities
+- [x] Add undo and redo
+- [x] Save and reload versioned project files
+- [x] Validate mapping indices and project files
 
 **Test goals:** swaps, identity mapping, invalid indices, undo/redo sequences, save/load round trips, malformed files, version handling.
 

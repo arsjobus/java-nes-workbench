@@ -63,4 +63,13 @@ class RomSummaryTest {
         assertThrows(IndexOutOfBoundsException.class, () -> chrRam.describeTile(0));
     }
     @Test void rejectsNullRom() { assertThrows(NullPointerException.class, () -> RomSummary.of(null)); }
+    @Test void describeMappingShowsPositionAndOriginalTileOffsets() throws Exception {
+        RomSummary s = summary(RomFixtures.make(1, 1, 0, 0)); // CHR starts at file offset 16 + 16384 = $4010
+        assertEquals("Position 1 ($1) shows original tile 18 ($12) | CHR offset $0120 | file offset $04130", s.describeMapping(1, 18));
+    }
+    @Test void describeMappingRejectsOutOfRangeValues() throws Exception {
+        RomSummary s = summary(RomFixtures.make(1, 1, 0, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> s.describeMapping(-1, 0)); assertThrows(IndexOutOfBoundsException.class, () -> s.describeMapping(512, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> s.describeMapping(0, 512)); assertDoesNotThrow(() -> s.describeMapping(511, 511));
+    }
 }
