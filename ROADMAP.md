@@ -9,21 +9,21 @@ Every item must include implementation, automated tests, and explicit completion
 - [x] Add mandatory AI development/testing instructions
 - [x] Add roadmap and bug log
 - [x] Configure JUnit 5
-- [ ] Verify clean build and tests on the target development machine
+- [x] Verify clean build and tests on the target development machine
 
 ### 2. ROM reading and validation
 - [x] Parse standard iNES 1.0 header fields
 - [x] Locate trainer, PRG-ROM, and CHR-ROM data
 - [x] Reject truncated files and NES 2.0 headers clearly
-- [ ] Display parsed metadata in the UI
+- [x] Display parsed metadata in the UI
 
 **Test goals:** header fields, trainer offsets, PRG/CHR boundaries, CHR-RAM cartridges, invalid magic, truncated files, short headers, NES 2.0 rejection, defensive copies.
 
 ### 3. CHR tile decoding
 - [x] Decode 2bpp CHR data into indexed 8×8 pixel tiles
-- [ ] Add JavaFX tile grid with indices and selection
-- [ ] Add zoom and grid overlays
-- [ ] Export decoded tile sheets to PNG
+- [x] Add JavaFX tile grid with indices and selection
+- [x] Add zoom and grid overlays
+- [x] Export decoded tile sheets to PNG
 
 **Test goals:** known bitplane patterns, all four pixel values, multiple tiles, empty data, invalid length, deterministic output.
 
