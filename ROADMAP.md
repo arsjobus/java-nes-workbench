@@ -37,11 +37,11 @@ Every item must include implementation, automated tests, and explicit completion
 **Test goals:** swaps, identity mapping, invalid indices, undo/redo sequences, save/load round trips, malformed files, version handling.
 
 ## v0.3 — Sprite composition and artwork
-- [ ] Assemble larger sprite compositions from indexed tiles
-- [ ] Save named compositions with source tile references
-- [ ] Export PNG artwork
-- [ ] Import edited PNGs with palette and format validation
-- [ ] Compare imported graphics with source tiles
+- [x] Assemble larger sprite compositions from indexed tiles
+- [x] Save named compositions with source tile references
+- [x] Export PNG artwork
+- [x] Import edited PNGs with palette and format validation
+- [x] Compare imported graphics with source tiles
 
 **Test goals:** layout boundaries, source-reference preservation, PNG dimensions, palette constraints, pixel round trips, invalid imports.
 

@@ -67,8 +67,8 @@ class ProjectFileTest {
         rejects(valid().replace("PROJECT 1", "PROJECT 1.5")); rejects(valid().replace("PROJECT 1", "PROJECT 99999999999"));
     }
     @Test void newerVersionGetsAClearMessage() {
-        String message = rejects(valid().replace("PROJECT 1", "PROJECT 2")).getMessage();
-        assertTrue(message.contains("newer") && message.contains("version 2"));
+        String message = rejects(valid().replace("PROJECT 1", "PROJECT 3")).getMessage();
+        assertTrue(message.contains("newer") && message.contains("version 3") && message.contains("up to version 2"));
     }
     @Test void rejectsMissingKeys() { for (String key : new String[]{"rom-name", "rom-sha256", "tile-count", "mapping"}) rejects(Arrays.stream(valid().split("\n")).filter(l -> !l.startsWith(key + "=")).reduce((a, b) -> a + "\n" + b).get()); }
     @Test void rejectsDuplicateAndUnknownKeys() { rejects(valid() + "mapping=2,0,1\n"); rejects(valid() + "extra=1\n"); }
