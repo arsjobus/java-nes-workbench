@@ -46,11 +46,11 @@ Every item must include implementation, automated tests, and explicit completion
 **Test goals:** layout boundaries, source-reference preservation, PNG dimensions, palette constraints, pixel round trips, invalid imports.
 
 ## v0.4 — Safe ROM rebuilding
-- [ ] Keep mapping edits distinct from CHR byte edits
-- [ ] Write modified output to a new file by default
-- [ ] Preserve unrelated bytes wherever format permits
-- [ ] Produce a byte-level difference report
-- [ ] Reopen and validate rebuilt output
+- [x] Keep mapping edits distinct from CHR byte edits
+- [x] Write modified output to a new file by default
+- [x] Preserve unrelated bytes wherever format permits
+- [x] Produce a byte-level difference report
+- [x] Reopen and validate rebuilt output
 
 **Test goals:** source remains unchanged, unchanged-region preservation, expected changed offsets, output reparsing, malformed output rejection.
 

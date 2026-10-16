@@ -9,7 +9,7 @@ A local-first Java desktop application for inspecting and eventually editing gra
 - Keep project data portable and documented.
 - Require automated tests for every feature and bug fix.
 
-## Current functionality (v0.3)
+## Current functionality (v0.4)
 
 - Open a `.nes` ROM from the UI; the source file is only ever read.
 - Parser for standard iNES 1.0 headers and PRG/CHR data layout, with clear errors for truncated files, bad magic, and NES 2.0.
@@ -21,9 +21,10 @@ A local-first Java desktop application for inspecting and eventually editing gra
 - Sprite compositions: create a named grid of 1x1 to 32x32 tiles, select a tile in the sheet and click a composition cell to place it (right-click clears a cell). Cells store the *original* CHR tile index, so they are unaffected by tile mapping changes. Compositions are saved in the project file (format version 2, see [`docs/PROJECT_FORMAT.md`](docs/PROJECT_FORMAT.md)); projects without compositions are still written as version 1.
 - Artwork export: write a composition as a 2-bit indexed PNG at 1x (8 pixels per tile). Empty cells are index 0.
 - Artwork import and comparison: read an edited PNG back, validate it, and report which pixels and cells differ from the source tiles. The PNG must be a real PNG of exactly the composition's size, fully opaque, using only the four palette colors (indexed, grayscale, or truecolor files are all accepted; indices come from the colors, not the file's palette order). Importing only compares; it never changes the ROM, the mapping, or a composition.
-- Unit tests for parsing, loading, summaries, tile decoding, layout, rendering, browsing state, PNG export, mapping, undo/redo, project files, compositions, artwork import/export, and comparison.
+- Safe ROM rebuilding: when a comparison shows changes, the artwork can be applied to CHR data and written to a **new** ROM file (default name `game-rebuilt.nes`). Only the changed 16-byte tiles differ; the header, trainer, PRG-ROM, other tiles and any trailing bytes are copied unchanged. The source file is never written, an existing file is never replaced, and tile mappings are never applied to the output. The written file is reopened from disk and validated, and a byte-level difference report (offsets, regions and CHR tiles) is shown. If validation fails the new file is removed. See [`docs/REBUILD.md`](docs/REBUILD.md).
+- Unit tests for parsing, loading, summaries, tile decoding and encoding, layout, rendering, browsing state, PNG export, mapping, undo/redo, project files, compositions, artwork import/export, comparison, and ROM rebuilding (edits, byte diffs, safe writing, verification, end-to-end files).
 
-This is not yet a ROM editor. Mapper-specific interpretation, NES 2.0 support, ROM writing and CHR byte editing are not implemented, and edited artwork cannot yet be applied back to a ROM (planned for v0.4). CHR-RAM cartridges have no tile data to display. Tile colors use a fixed grayscale palette, not the game's real NES palette.
+This is not yet a ROM editor. Mapper-specific interpretation and NES 2.0 support are not implemented, and CHR bytes can only change through the artwork-to-rebuilt-copy flow above. CHR-RAM cartridges have no tile data to display. Tile colors use a fixed grayscale palette, not the game's real NES palette.
 
 ## Requirements
 - JDK 21

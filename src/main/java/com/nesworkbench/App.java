@@ -9,6 +9,10 @@ import com.nesworkbench.mapping.TileMapping;
 import com.nesworkbench.project.ProjectData;
 import com.nesworkbench.project.ProjectFile;
 import com.nesworkbench.project.ProjectFormatException;
+import com.nesworkbench.rebuild.ArtworkChrEdits;
+import com.nesworkbench.rebuild.ChrEdits;
+import com.nesworkbench.rebuild.RebuildException;
+import com.nesworkbench.rebuild.RomRebuilder;
 import com.nesworkbench.rom.RomFormatException;
 import com.nesworkbench.rom.RomImage;
 import com.nesworkbench.rom.RomLoader;
@@ -25,6 +29,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -570,9 +575,60 @@ public final class App extends Application {
             alert.showAndWait();
             status.setText(result.identical() ? "Imported artwork is identical to the source tiles."
                     : "Imported artwork differs: " + result.changedPixels() + " of " + result.totalPixels() + " pixels in " + result.changedCellCount() + " cell(s).");
+            if (!result.identical()) offerRebuild(c, art);
         } catch (ArtworkFormatException | IOException | IllegalArgumentException ex) {
             showError("Cannot import " + file.getName(), ex.getMessage());
             status.setText("Failed to import " + file.getName() + ": " + ex.getMessage());
+        }
+    }
+
+    /**
+     * After a comparison shows changes, offers to write a rebuilt copy of the ROM with the artwork applied to CHR data.
+     * The source ROM is never written; the copy goes to a new file, is reopened, and is validated.
+     */
+    private void offerRebuild(SpriteComposition c, ImportedArtwork art) {
+        ChrEdits edits;
+        try {
+            edits = ArtworkChrEdits.from(c, model.tiles(), art);
+        } catch (RebuildException ex) {
+            showError("Artwork cannot be applied to the ROM", ex.getMessage());
+            status.setText("Artwork cannot be applied: " + ex.getMessage());
+            return;
+        }
+        if (edits.isEmpty()) return;
+        ButtonType write = new ButtonType("Write rebuilt copy…", ButtonBar.ButtonData.OK_DONE);
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "This changes the CHR data of " + edits.size() + " tile(s) in a new ROM file. The source ROM is not modified, and tile mappings are not applied.",
+                write, ButtonType.CANCEL);
+        confirm.setTitle("Rebuild ROM");
+        confirm.setHeaderText("Apply the imported artwork to a copy of the ROM?");
+        confirm.initOwner(stage);
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != write) return;
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Save rebuilt ROM as");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("NES ROM (*.nes)", "*.nes"));
+        chooser.setInitialFileName(RomRebuilder.defaultOutputName(romPath.getFileName().toString()));
+        if (romPath.getParent() != null) chooser.setInitialDirectory(romPath.getParent().toFile());
+        java.io.File target = chooser.showSaveDialog(stage);
+        if (target == null) return;
+        try {
+            RomRebuilder.Result result = RomRebuilder.rebuildToFile(image, romPath, edits, target.toPath());
+            TextArea report = new TextArea(result.diff().report(RomSummary.of(result.reopened())));
+            report.setEditable(false);
+            report.setPrefColumnCount(70);
+            report.setPrefRowCount(16);
+            report.setStyle("-fx-font-family: 'monospaced';");
+            Alert done = new Alert(Alert.AlertType.INFORMATION);
+            done.setTitle("ROM rebuilt");
+            done.setHeaderText(target.getName() + " was written, reopened, and validated. The source ROM was not changed.");
+            done.getDialogPane().setContent(report);
+            done.initOwner(stage);
+            done.showAndWait();
+            status.setText("Rebuilt " + target.getName() + ": " + result.diff().changedBytes() + " byte(s) changed in " + edits.size() + " tile(s).");
+        } catch (IOException | RebuildException ex) {
+            showError("Cannot write rebuilt ROM", ex.getMessage());
+            status.setText("Rebuild failed: " + ex.getMessage());
         }
     }
 
